@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthPulse - Patient & Doctor Management</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <header class="header">
+        <div class="header-container">
+            <a href="#" class="logo">
+                <i class="fa-solid fa-hospital"></i>
+                <span>HealthPulse <span style="font-weight:400; color:#64748b; font-size:0.95rem;">| Clinic Portal</span></span>
+            </a>
+
+            <!-- Navigation Tabs -->
+            <div class="nav-tabs">
+                <button class="nav-tab active" data-target="patientsSection">
+                    <i class="fa-solid fa-hospital-user"></i> Patients
+                </button>
+                <button class="nav-tab" data-target="doctorsSection">
+                    <i class="fa-solid fa-user-doctor"></i> Doctors
+                </button>
+            </div>
+
+            <!-- Action Icons & Status -->
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+                <button class="btn btn-info-outline" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;" onclick="promptBackendUrl()" title="Configure Live Render Backend API URL">
+                    <i class="fa-solid fa-server"></i> <span>Backend URL</span>
+                </button>
+                <button class="btn-bell" id="headerBellBtn" onclick="openAllNotifications()" title="Doctor Appointments & Alerts">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="bell-badge" id="headerBellBadge" style="display:none;">0</span>
+                </button>
+                <div class="badge-status">
+                    <span class="status-dot"></span>
+                    <span>API Connected</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-content">
+
+        <!-- Top Stats Row -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-info">
+                    <h3>Total Patients</h3>
+                    <div class="stat-number" id="totalPatients">0</div>
+                </div>
+                <div class="stat-icon emerald">
+                    <i class="fa-solid fa-hospital-user"></i>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-info">
+                    <h3>Registered Doctors</h3>
+                    <div class="stat-number" id="totalDoctors">0</div>
+                </div>
+                <div class="stat-icon blue">
+                    <i class="fa-solid fa-user-doctor"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PATIENTS TAB ================= -->
+        <section id="patientsSection" class="tab-panel active">
+            <div class="section-grid">
+                
+                <!-- Left: Add Patient Form -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-user-plus" style="color:var(--primary);"></i> Add New Patient</h2>
+                    </div>
+                    <div class="card-body">
+                        <form id="patientForm">
+                            <!-- Row 1: Personal & Contact Information -->
+                            <div class="form-grid-4">
+                                <div class="form-group">
+                                    <label for="patientName">Full Name *</label>
+                                    <input type="text" id="patientName" class="form-control" placeholder="e.g. Ramesh Kumar" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="patientCity">Your City / Location *</label>
+                                    <input type="text" id="patientCity" class="form-control" placeholder="e.g. Noida, Delhi" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="patientPhone">Contact Phone *</label>
+                                    <input type="tel" id="patientPhone" class="form-control" placeholder="10-digit number" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="patientEmail">Email Address *</label>
+                                    <input type="email" id="patientEmail" class="form-control" placeholder="name@example.com" required>
+                                </div>
+                            </div>
+
+                            <!-- Row 2: Disease / Symptom Dropdown Selection -->
+                            <div class="form-group">
+                                <label for="diseaseSelect">Disease / Symptom / Health Issue (Scroll down to view all) *</label>
+                                
+                                <select id="diseaseSelect" class="form-control" style="font-size:0.95rem; padding:0.75rem 1rem;">
+                                    <option value="">-- Choose Disease / Symptom (Scroll down to see all categories) --</option>
+                                    
+                                    <optgroup label="❤️ Heart & Cardiology">
+                                        <option value="Chest pain">Chest pain / Angina</option>
+                                        <option value="High Blood Pressure (BP)">High Blood Pressure (BP)</option>
+                                        <option value="Heart Palpitations">Heart Palpitations / Fast heartbeat</option>
+                                        <option value="Shortness of breath">Shortness of breath / Cardiac issue</option>
+                                    </optgroup>
+
+                                    <optgroup label="🌿 Skin & Dermatology">
+                                        <option value="Skin rash and allergy">Skin rash & allergy</option>
+                                        <option value="Acne and severe pimples">Acne & severe pimples</option>
+                                        <option value="Eczema and Psoriasis">Eczema / Psoriasis</option>
+                                        <option value="Fungal skin infection">Fungal skin infection / Itching</option>
+                                        <option value="Hair fall and scalp infection">Hair fall & scalp infection</option>
+                                    </optgroup>
+
+                                    <optgroup label="🦴 Bones, Joints & Orthopedics">
+                                        <option value="Bone fracture">Bone fracture / Trauma</option>
+                                        <option value="Knee and joint pain">Knee & joint pain / Arthritis</option>
+                                        <option value="Severe back and spine pain">Severe back & spine pain</option>
+                                        <option value="Muscle sprain and injury">Muscle sprain & injury</option>
+                                        <option value="Neck stiffness and cervical pain">Neck stiffness & cervical pain</option>
+                                    </optgroup>
+
+                                    <optgroup label="🦷 Dental & Oral Health">
+                                        <option value="Severe toothache">Severe toothache</option>
+                                        <option value="Tooth cavity and decay">Tooth cavity & decay</option>
+                                        <option value="Bleeding gums and sensitivity">Bleeding gums & sensitivity</option>
+                                        <option value="Root canal problem">Root canal problem</option>
+                                    </optgroup>
+
+                                    <optgroup label="👁️ Eyes & Vision">
+                                        <option value="Blurry and low vision">Blurry / low vision</option>
+                                        <option value="Eye pain, redness and infection">Eye pain, redness & infection</option>
+                                        <option value="Cataract problem">Cataract problem</option>
+                                    </optgroup>
+
+                                    <optgroup label="🧠 Brain & Neurology">
+                                        <option value="Migraine and severe headache">Migraine & severe headache</option>
+                                        <option value="Nerve pain and numbness">Nerve pain & numbness</option>
+                                        <option value="Dizziness and vertigo">Dizziness & vertigo</option>
+                                    </optgroup>
+
+                                    <optgroup label="🤒 Fevers & General Illness">
+                                        <option value="High fever with chills">High fever with chills</option>
+                                        <option value="Persistent cough and cold">Persistent cough & cold</option>
+                                        <option value="Viral fever and flu">Viral fever & flu</option>
+                                        <option value="Extreme body pain and fatigue">Extreme body pain & fatigue</option>
+                                    </optgroup>
+
+                                    <optgroup label="🤢 Stomach & Digestion">
+                                        <option value="Severe stomach ache">Severe stomach ache</option>
+                                        <option value="Acidity, gas and heartburn">Acidity, gas & heartburn</option>
+                                        <option value="Food poisoning and vomiting">Food poisoning & vomiting</option>
+                                        <option value="Constipation and bowel problem">Constipation & bowel problem</option>
+                                    </optgroup>
+
+                                    <optgroup label="👂 Ear, Nose & Throat (ENT)">
+                                        <option value="Ear pain and infection">Ear pain & infection</option>
+                                        <option value="Severe sore throat and tonsils">Severe sore throat & tonsils</option>
+                                        <option value="Sinus congestion and pain">Sinus congestion & pain</option>
+                                    </optgroup>
+
+                                    <optgroup label="👶 Children Health">
+                                        <option value="Child fever and infection">Child fever & infection</option>
+                                        <option value="Child cough and cold">Child cough & cold</option>
+                                    </optgroup>
+
+                                    <optgroup label="✏️ Other Diseases">
+                                        <option value="OTHER">➕ Others (Write your custom disease)</option>
+                                    </optgroup>
+                                </select>
+
+                                <!-- Custom / Other Disease Input Box (Appears when 'OTHER' is chosen) -->
+                                <div id="otherDiseaseContainer" class="other-disease-input-box" style="display:none; margin-top:0.75rem;">
+                                    <label for="customDiseaseInput" style="font-size:0.85rem; color:#b45309; font-weight:600;">
+                                        <i class="fa-solid fa-pen-to-square"></i> Specify Custom Disease / Symptom:
+                                    </label>
+                                    <input type="text" id="customDiseaseInput" class="form-control" placeholder="Type your specific disease or health issue here..." autocomplete="off">
+                                </div>
+
+                                <!-- Hidden input keeping compatibility with backend submit -->
+                                <input type="hidden" id="patientSymptom">
+
+                                <!-- Dynamic Recommended Doctors Box -->
+                                <div id="recommendedDoctorsBox" class="recommended-box" style="margin-top:1rem;">
+                                    <div class="rec-title">
+                                        <i class="fa-solid fa-wand-magic-sparkles"></i> Recommended Doctors for this Disease (Nearest First):
+                                    </div>
+                                    <div id="recList" class="rec-list">
+                                        <!-- Injected dynamically based on disease and location -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Row 3: Assign Doctor & Submit Button -->
+                            <div class="form-grid-2" style="align-items:end; margin-top:1rem;">
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label for="doctorSelect">Selected Consulting Doctor</label>
+                                    <select id="doctorSelect" class="form-control" style="padding:0.75rem 1rem;">
+                                        <option value="">-- Select Assigned Doctor (Optional) --</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <button type="submit" class="btn btn-primary btn-block" style="padding:0.75rem 1.5rem; font-size:0.95rem;">
+                                        <i class="fa-solid fa-calendar-check"></i> Save Patient & Book Consultation
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Right: Patients Directory Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-list-check" style="color:var(--primary);"></i> Patients Directory</h2>
+                        <div class="search-wrapper">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="searchPatients" class="search-input" placeholder="Search patients...">
+                        </div>
+                    </div>
+                    <div class="card-body" style="padding:0;">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Patient Name</th>
+                                        <th>Symptom</th>
+                                        <th>Doctor</th>
+                                        <th>Doctor Confirmation / Slot</th>
+                                        <th>City</th>
+                                        <th>Contact</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="patientsTableBody">
+                                    <!-- Rendered dynamically via app.js -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= DOCTORS TAB ================= -->
+        <section id="doctorsSection" class="tab-panel">
+            <div class="section-grid">
+                
+                <!-- Left: Add Doctor Form -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-user-doctor" style="color:var(--primary);"></i> Add New Doctor</h2>
+                    </div>
+                    <div class="card-body">
+                        <form id="doctorForm">
+                            <div class="form-grid-3">
+                                <div class="form-group">
+                                    <label for="docName">Doctor Name *</label>
+                                    <input type="text" id="docName" class="form-control" placeholder="e.g. Dr. A. K. Sharma" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="docSpeciality">Speciality *</label>
+                                    <input type="text" id="docSpeciality" class="form-control" placeholder="e.g. Cardiology, Dermatology" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="docCity">City / Location *</label>
+                                    <input type="text" id="docCity" class="form-control" placeholder="e.g. Noida" required>
+                                </div>
+                            </div>
+
+                            <div class="form-grid-3" style="align-items:end;">
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label for="docPhone">Contact Phone *</label>
+                                    <input type="tel" id="docPhone" class="form-control" placeholder="10-digit number" required>
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label for="docEmail">Email Address *</label>
+                                    <input type="email" id="docEmail" class="form-control" placeholder="doctor@example.com" required>
+                                </div>
+                                <div>
+                                    <button type="submit" class="btn btn-primary btn-block" style="padding:0.75rem 1.5rem; font-size:0.95rem;">
+                                        <i class="fa-solid fa-user-plus"></i> Save & Register Doctor
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Right: Doctors Directory Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-stethoscope" style="color:var(--primary);"></i> Doctors Directory</h2>
+                        <div class="search-wrapper">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="searchDoctors" class="search-input" placeholder="Search doctors...">
+                        </div>
+                    </div>
+                    <div class="card-body" style="padding:0;">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Doctor Name</th>
+                                        <th>Speciality</th>
+                                        <th>City</th>
+                                        <th>Contact Details</th>
+                                        <th>Appointments & Alerts</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="doctorsTableBody">
+                                    <!-- Rendered dynamically via app.js -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal for Patient Details with Doctor -->
+    <div id="detailModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-id-card" style="color:var(--primary);"></i> Patient Information Card</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody" class="modal-body">
+                <!-- Dynamically filled by app.js -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Doctor Appointments & Notifications -->
+    <div id="doctorAppointmentsModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 560px;">
+            <div class="modal-header">
+                <h3 id="docAppModalTitle"><i class="fa-solid fa-bell" style="color:var(--primary);"></i> Doctor Appointments & Notifications</h3>
+                <button class="modal-close" onclick="closeDoctorAppointmentsModal()">&times;</button>
+            </div>
+            <div id="docAppModalBody" class="modal-body" style="max-height: 420px; overflow-y: auto;">
+                <!-- Dynamically filled by app.js -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- JavaScript Application -->
+    <script src="js/app.js"></script>
+</body>
+</html>
